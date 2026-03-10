@@ -1,0 +1,25 @@
+{
+  "project": "<project_name>",
+  "last_updated": "<ISO 8601 datetime>",
+  "current_session": 1,
+  "total_features": 0,
+  "completed_features": 0,
+  "status": "initialized",
+  "last_completed": null,
+  "next_steps": "Review feature-list.json and start implementing the first high-priority failing feature",
+  "notes": "",
+  "environment": {
+    "setup_command": "<command to set up the dev environment>",
+    "test_command": "<command to run tests>",
+    "build_command": "<command to build the project>",
+    "dev_command": "<command to start the development server>"
+  },
+  "session_history": [
+    {
+      "session": 1,
+      "date": "<ISO 8601 date>",
+      "completed": [],
+      "notes": "Project initialized"
+    }
+  ]
+}

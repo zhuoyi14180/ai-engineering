@@ -1,0 +1,32 @@
+{
+  "project": "<project_name>",
+  "version": "1.0.0",
+  "created_at": "<ISO 8601 datetime>",
+  "features": [
+    {
+      "id": "F001",
+      "name": "<feature name>",
+      "description": "<what this feature does and why it's needed>",
+      "acceptance_criteria": [
+        "<specific, testable criterion 1>",
+        "<specific, testable criterion 2>"
+      ],
+      "status": "failing",
+      "priority": "high",
+      "depends_on": [],
+      "notes": ""
+    },
+    {
+      "id": "F002",
+      "name": "<feature name>",
+      "description": "<what this feature does and why it's needed>",
+      "acceptance_criteria": [
+        "<specific, testable criterion 1>"
+      ],
+      "status": "failing",
+      "priority": "medium",
+      "depends_on": ["F001"],
+      "notes": ""
+    }
+  ]
+}
