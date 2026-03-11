@@ -11,8 +11,6 @@ make install
 # 查看差异（更新前预览）
 make diff
 
-# 更新（重新同步）
-make update
 ```
 
 ## 体系结构
@@ -27,6 +25,8 @@ ai-engineering/
 ├── context/         # 可复用的专题知识片段（供 @import）
 ├── rules/           # 路径匹配规则（供项目 .claude/rules/ 引用）
 ├── agents/          # Agent harness 定义（双 Agent 模式）
+│   ├── initializer/ # Initializer Agent：一次性环境搭建
+│   └── coding/      # Coding Agent：多会话增量实现
 ├── templates/       # 新项目模板文件
 ├── docs/            # 方法论文档
 ├── mcps/            # MCP 推荐配置
@@ -49,6 +49,6 @@ git submodule add https://github.com/<user>/ai-engineering .ai-engineering
 ## 核心理念
 
 - **全局配置分层**：`~/.claude/CLAUDE.md`（个人）→ 项目 `CLAUDE.md`（团队）→ 会话 `progress.json`（任务）
-- **双 Agent 模式**：Initializer 建立基线，Coding Agent 增量实现
+- **双 Agent 模式**：Initializer 建立基线，Coding Agent 持续工作
 - **Eval-Driven**：每个 skill 有对应 eval，配置变更可量化验证
 - **最小改动原则**：只做被要求的，不预判未来需求

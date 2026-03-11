@@ -2,6 +2,17 @@
 
 本文档说明如何将 `ai-engineering` 体系接入一个新项目。
 
+## 前提
+
+在开始接入新项目之前，需先在本机完成一次性的全局安装：
+
+```bash
+cd /path/to/ai-engineering
+make install
+```
+
+这会将 `global/` 下的配置（CLAUDE.md、settings.json、hooks、skills）同步到 `~/.claude/`，对该机器上所有项目生效。
+
 ## 方式一：Git Submodule（推荐）
 
 适用于需要版本锁定的项目。
@@ -20,20 +31,20 @@ git add .ai-engineering && git commit -m "chore: pin ai-engineering to v1.0.0"
 
 **更新 submodule**：
 ```bash
-cd .ai-engineering && git pull origin main && cd ..
-make diff   # 预览变更
-make update # 应用变更到 ~/.claude/
+cd .ai-engineering && git pull origin main
+make diff
+make update
 ```
 
 ## 方式二：直接引用（轻量）
 
 适用于个人项目，不想引入 submodule 依赖。
 
-直接在项目的 `CLAUDE.md` 中使用绝对路径引用：
+直接在项目的 `CLAUDE.md` 中引用（此处需替换为真实路径）：
 
 ```markdown
-@/Users/jorizhang/projects/mine/ai-engineering/context/coding-standards.md
-@/Users/jorizhang/projects/mine/ai-engineering/context/testing-patterns.md
+@/path/to/ai-engineering/context/coding-standards.md
+@/path/to/ai-engineering/context/testing-patterns.md
 ```
 
 ## 创建项目 CLAUDE.md
@@ -51,20 +62,32 @@ cp .ai-engineering/templates/project-CLAUDE.md CLAUDE.md
 
 ## 启动长期开发任务
 
-1. 使用 `/init-project` skill（如已安装）或手动执行 Initializer Agent：
-   ```
-   参考 .ai-engineering/agents/initializer/prompt.md
-   ```
+### 分支 A：使用 /init-project skill（推荐）
 
-2. 复制模板文件到项目根目录：
-   ```bash
-   cp .ai-engineering/templates/feature-list.json feature-list.json
-   cp .ai-engineering/templates/progress.json progress.json
-   ```
+在 Claude Code 对话中运行：
 
-3. 填写 `feature-list.json` 中的功能列表
+```
+/init-project <项目描述>
+```
 
-4. 启动 Coding Agent（参考 `.ai-engineering/agents/coding/prompt.md`）
+skill 会自动生成 `feature-list.json` 和 `progress.json`，完成环境搭建和初始 commit。
+
+### 分支 B：手动初始化
+
+不使用 skill 时，手动复制模板并填写：
+
+```bash
+cp .ai-engineering/templates/feature-list.json feature-list.json
+cp .ai-engineering/templates/progress.json progress.json
+```
+
+然后填写两个文件中的占位符字段：
+- `feature-list.json`：替换 `<project_name>`、`<ISO 8601 datetime>`，将示例功能条目改为真实功能
+- `progress.json`：填写 `project`、`last_updated`、`total_features`（与功能数一致）、`environment` 下的四个命令（`setup_command`、`test_command`、`build_command`、`dev_command`）
+
+### 后续开发（两种分支通用）
+
+启动 Coding Agent（参考 `.ai-engineering/agents/coding/prompt.md`），每次新会话粘贴该 prompt 作为开场，Agent 会自动读取 `progress.json` 接续上次进度。
 
 ## 文件结构建议
 
