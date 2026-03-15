@@ -20,7 +20,7 @@ Unit Tests（单元）← 大多数测试在这里
 
 - 单元测试：纯函数、业务逻辑、工具函数
 - 集成测试：模块间交互、数据库操作、外部服务 mock
-- E2E 测试：关键用户路径，用浏览器自动化（Puppeteer/Playwright）
+- E2E 测试：关键用户路径，用浏览器自动化（Playwright）
 
 ## 各语言测试工具
 
@@ -73,10 +73,10 @@ class UserServiceTest {
 
 ## 浏览器自动化（E2E）
 
-对于 Web 应用，使用 Puppeteer 或 Playwright 做端到端验证：
+对于 Web 应用，使用 Playwright 做端到端验证：
 - 关键用户流程必须有 E2E 覆盖（登录、核心业务动作）
 - E2E 跑在 CI 中，失败时阻断合并
-- 参考 `mcps/README.md` 中的 Puppeteer MCP 配置
+- 参考 `mcps/README.md` 中的 Playwright MCP 配置
 
 ## CI 集成
 

@@ -5,11 +5,12 @@ MCP（Model Context Protocol）允许 Claude Code 连接外部工具和数据源
 ## 安装命令
 
 ```bash
+# 以下命令中 'claude' 为默认命令名，如使用其他名称（如 claude-internal）请替换
 # 文件系统 MCP（允许访问特定目录）
 claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /path/to/allowed/dir
 
-# Puppeteer 浏览器自动化（E2E 测试、网页操作）
-claude mcp add puppeteer -- npx -y @modelcontextprotocol/server-puppeteer
+# Playwright 浏览器自动化（E2E 测试、网页操作）
+claude mcp add playwright -- npx @playwright/mcp@latest
 
 # 数据库 MCP（SQLite）
 claude mcp add sqlite -- npx -y @modelcontextprotocol/server-sqlite /path/to/db.sqlite
@@ -24,16 +25,16 @@ claude mcp add github -- npx -y @modelcontextprotocol/server-github
 | MCP | 用途 | 安装包 |
 |-----|------|--------|
 | filesystem | 文件读写（受限目录） | `@modelcontextprotocol/server-filesystem` |
-| puppeteer | 浏览器自动化、E2E 测试 | `@modelcontextprotocol/server-puppeteer` |
+| playwright | 浏览器自动化、E2E 测试 | `@playwright/mcp` |
 | github | GitHub 操作（PR/Issue） | `@modelcontextprotocol/server-github` |
 | sqlite | SQLite 数据库操作 | `@modelcontextprotocol/server-sqlite` |
 
-## Puppeteer MCP 使用场景
+## Playwright MCP 使用场景
 
 对应 Anthropic 文章中的「浏览器自动化验证」：
 
 ```
-# 在 Claude Code 中，Puppeteer MCP 安装后可以：
+# 在 Claude Code 中，Playwright MCP 安装后可以：
 - 打开页面验证功能
 - 截图对比
 - 模拟用户交互

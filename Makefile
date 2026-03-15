@@ -1,6 +1,9 @@
 .PHONY: install update diff check help
+# 自动化脚本用法（不作为 make target，直接运行）：
+#   ./scripts/run-coding-agent.sh --project-dir /path/to/project
+#   ./scripts/run-coding-agent.sh --project-dir /path/to/project --max-runs 5 --skip-permissions
 
-CLAUDE_DIR := $(HOME)/.claude
+CLAUDE_DIR ?= $(HOME)/.claude
 GLOBAL_DIR := $(CURDIR)/global
 
 help: ## Show this help

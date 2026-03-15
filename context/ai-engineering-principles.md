@@ -38,7 +38,7 @@
 > "It is unacceptable to remove or edit tests because this could lead to missing or buggy functionality."
 
 - 测试失败时，修复代码；不修改 assertion 来让测试通过
-- 浏览器自动化（如 Puppeteer）是端到端验证的有效工具
+- 浏览器自动化（如 Playwright）是端到端验证的有效工具
 
 ### 4. 功能列表用 JSON，不用 Markdown
 

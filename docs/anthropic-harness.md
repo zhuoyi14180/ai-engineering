@@ -82,5 +82,5 @@
 
 - **Git**：版本控制 + 状态管理
 - **JSON**：结构化数据表示
-- **Puppeteer/Playwright MCP**：浏览器自动化测试
+- **Playwright MCP**：浏览器自动化测试
 - **Shell scripts**：环境初始化（init.sh）

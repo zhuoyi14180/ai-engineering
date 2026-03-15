@@ -3,7 +3,10 @@
     "allow": [
       "WebFetch(domain:www.anthropic.com)",
       "WebSearch",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(chmod +x:*)"
     ]
   }
 }

@@ -98,5 +98,5 @@ Layer 4: progress.json             当前任务状态（会话桥梁）
 | progress 文件 | `templates/progress.json` + CLAUDE.md 约束 |
 | Git 作为状态机 | git-workflow context + CLAUDE.md Git 规范 |
 | 测试不可跳过 | CLAUDE.md 硬性测试约束 |
-| 浏览器自动化 | `mcps/README.md` Puppeteer MCP |
+| 浏览器自动化 | `mcps/README.md` Playwright MCP |
 | 会话开始验证 | `agents/coding/prompt.md` 检查清单 |
