@@ -71,6 +71,14 @@ AI 辅助编程带来了效率提升，但也引入了新的挑战：
 - 遇到常见的错误，加入 pre-bash-check.sh 的拦截规则
 - 定期 review `global/CLAUDE.md`，确保规范仍然适用
 
+**触发检查清单**（出现以下场景时主动更新 context/）：
+- 解决了一个之前被卡住超过 30 分钟的问题
+- `/review-pr` 发现某类问题在同一个 PR 或近期多个 PR 中反复出现
+- 某个 context 文件超过 3 个月没有更新，重新阅读时发现内容过时
+- 实现某个功能后发现比 acceptance_criteria 描述的更复杂，且复杂度是可预见的
+
+执行方式：运行 `/update-context <问题描述或 review 输出>` skill，它会引导你将发现提炼为 context 文件的具体条目。
+
 ## 配置分层模型
 
 ```
@@ -93,7 +101,7 @@ Layer 4: progress.json             当前任务状态（会话桥梁）
 
 | 文章建议 | 本体系实现 |
 |---------|-----------|
-| 双 Agent 模式 | `agents/initializer/` + `agents/coding/` |
+| 双 Agent 模式 | `/init-project` skill（初始化）+ `agents/coding/prompt.md`（开发）|
 | JSON 功能列表 | `templates/feature-list.json` |
 | progress 文件 | `templates/progress.json` + CLAUDE.md 约束 |
 | Git 作为状态机 | git-workflow context + CLAUDE.md Git 规范 |

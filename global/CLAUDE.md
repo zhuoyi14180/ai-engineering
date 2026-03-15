@@ -27,9 +27,8 @@
 
 ## Git 规范
 
-- commit message 格式：`<type>(<scope>): <subject>`（中文 subject 可接受）
-- type: feat / fix / refactor / test / docs / chore
 - 非平凡的 push、force push、reset --hard 等操作执行前须确认
+- commit 格式和分支策略详见 @context/git-workflow.md
 
 # 编码偏好
 

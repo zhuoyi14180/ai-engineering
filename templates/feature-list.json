@@ -14,6 +14,7 @@
       "status": "failing",
       "priority": "high",
       "depends_on": [],
+      "spec_ref": "",
       "notes": ""
     },
     {
@@ -26,6 +27,7 @@
       "status": "failing",
       "priority": "medium",
       "depends_on": ["F001"],
+      "spec_ref": "docs/design.md#feature-name",
       "notes": ""
     }
   ]

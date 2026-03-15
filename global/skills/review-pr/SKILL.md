@@ -45,4 +45,6 @@ Provide your review as:
 - **Suggestions** (optional): Non-blocking improvements
 - **Verdict**: Approve / Request Changes / Needs Discussion
 
+> If this review surfaces a recurring issue pattern (e.g., missing input validation, inconsistent error handling), run `/update-context` to persist the finding to the relevant context file.
+
 $ARGUMENTS
