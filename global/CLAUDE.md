@@ -6,11 +6,25 @@
 
 # 工作流规范
 
+## 工作模式检测
+
+每次会话开始时，通过以下文件存在性自动推断工作模式：
+
+| 条件 | 模式 |
+|------|------|
+| `progress.json` + `feature-list.json` 同时存在 | **automated**（自动化）|
+| 只有 `feature-list.json` 存在 | **spec-coding**（结构化交互）|
+| 两者都不存在 | **vibe-coding**（自由探索）|
+
+不同模式下的行为约束不同，详见后续各章节说明。
+
 ## 任务启动
 
 - 非平凡任务（超过 3 步或改动超过 2 个文件）先进入 Plan 模式
-- 长期任务（多会话）必须在项目根目录维护 `progress.json`
-- 每个会话开始前执行状态检查：当前目录、git log、progress.json 内容
+- **automated 模式**：每个会话开始前必须执行状态检查（pwd → git log → progress.json → feature-list.json → test_command）
+- **spec-coding 模式**：会话开始时确认工作目录和 git log；如有 feature-list.json 则读取
+- **vibe-coding 模式**：仅确认工作目录，直接询问用户要做什么
+- **automated 模式**：必须在项目根目录维护 `progress.json`；spec-coding / vibe-coding 模式不强制
 
 ## 代码修改原则
 

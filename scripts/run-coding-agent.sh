@@ -5,17 +5,21 @@
 #   ./scripts/run-coding-agent.sh [OPTIONS]
 #
 # 选项：
-#   --max-runs N        最大迭代次数（默认不限，运行直到所有 feature 完成）
-#   --project-dir PATH  目标项目路径（默认当前目录）
-#   --skip-permissions  向 claude 传递 --dangerously-skip-permissions
-#                       警告：会跳过所有工具调用确认，请确认项目已配置安全约束
+#   --max-runs N           最大迭代次数（默认不限，运行直到所有 feature 完成）
+#   --project-dir PATH     目标项目路径（默认当前目录）
+#   --timeout-per-run N    每轮 claude 调用的超时秒数（默认不限）
+#   --skip-permissions     向 claude 传递 --dangerously-skip-permissions
+#                          警告：会跳过所有工具调用确认，请确认项目已配置安全约束
 #
 # 前置要求：
 #   - 目标项目根目录存在 feature-list.json 和 progress.json
 #   - claude CLI 已安装且在 PATH 中
 #
 # 环境变量：
-#   CLAUDE_CMD          Claude CLI 命令名或路径（默认 claude）
+#   CLAUDE_CMD             Claude CLI 命令名或路径（默认 claude）
+#   NOTIFY_CMD             失败时执行的通知命令（可选，如 "osascript -e 'display notification...'")
+#                          脚本会在命令后追加一个消息参数，例：
+#                            NOTIFY_CMD='notify-send "Coding Agent"' ./run-coding-agent.sh ...
 
 set -euo pipefail
 
@@ -26,6 +30,7 @@ AGENT_PROMPT="$SCRIPT_DIR/../agents/coding/prompt.md"
 MAX_RUNS=0
 PROJECT_DIR="$(pwd)"
 SKIP_PERMISSIONS=false
+TIMEOUT_PER_RUN=0
 CLAUDE_CMD="${CLAUDE_CMD:-claude}"
 
 # ---------- 参数解析 ----------
@@ -35,11 +40,13 @@ while [[ $# -gt 0 ]]; do
       MAX_RUNS="$2"; shift 2 ;;
     --project-dir)
       PROJECT_DIR="$(realpath "$2")"; shift 2 ;;
+    --timeout-per-run)
+      TIMEOUT_PER_RUN="$2"; shift 2 ;;
     --skip-permissions)
       SKIP_PERMISSIONS=true; shift ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--max-runs N] [--project-dir PATH] [--skip-permissions]" >&2
+      echo "Usage: $0 [--max-runs N] [--project-dir PATH] [--timeout-per-run N] [--skip-permissions]" >&2
       exit 1 ;;
   esac
 done
@@ -96,6 +103,7 @@ INITIAL_FAILING="$(count_failing)"
 log "=== Coding Agent Automation ==="
 log "Project: $PROJECT_DIR"
 log "Max runs: $([[ "$MAX_RUNS" -eq 0 ]] && echo unlimited || echo "$MAX_RUNS")"
+log "Timeout per run: $([[ "$TIMEOUT_PER_RUN" -eq 0 ]] && echo unlimited || echo "${TIMEOUT_PER_RUN}s")"
 log "Skip permissions: $SKIP_PERMISSIONS"
 log "Initial failing features: $INITIAL_FAILING"
 log ""
@@ -145,9 +153,16 @@ $(cat "$AGENT_PROMPT")
 - 完成一个 feature 后立即结束会话
 PROMPT_EOF
 
-  # 执行 claude
+  # 执行 claude（可选超时）
   EXIT_CODE=0
-  "$CLAUDE_CMD" "${CLAUDE_ARGS[@]}" < "$PROMPT_FILE" 2>&1 | tee "$RUN_LOG" || EXIT_CODE=$?
+  if [[ "$TIMEOUT_PER_RUN" -gt 0 ]]; then
+    timeout "$TIMEOUT_PER_RUN" "$CLAUDE_CMD" "${CLAUDE_ARGS[@]}" < "$PROMPT_FILE" 2>&1 | tee "$RUN_LOG" || EXIT_CODE=$?
+    if [[ $EXIT_CODE -eq 124 ]]; then
+      log "Run $run timed out after ${TIMEOUT_PER_RUN}s"
+    fi
+  else
+    "$CLAUDE_CMD" "${CLAUDE_ARGS[@]}" < "$PROMPT_FILE" 2>&1 | tee "$RUN_LOG" || EXIT_CODE=$?
+  fi
 
   rm -f "$PROMPT_FILE"; PROMPT_FILE=""
 
@@ -177,5 +192,9 @@ log "Main log:        $MAIN_LOG"
 if [[ "$FINAL_REMAINING" -gt 0 ]]; then
   log ""
   log "Some features still failing. Check progress.json for blockers."
+  # 触发通知（如果配置了 NOTIFY_CMD）
+  if [[ -n "${NOTIFY_CMD:-}" ]]; then
+    eval "$NOTIFY_CMD" "Coding Agent stopped: $FINAL_REMAINING feature(s) still failing in $(basename "$PROJECT_DIR")" 2>/dev/null || true
+  fi
   exit 1
 fi

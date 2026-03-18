@@ -23,6 +23,12 @@ Read the user's description from $ARGUMENTS. Confirm:
 
 If any of the above is unclear, **ask the user before proceeding**. Do not assume.
 
+After collecting the feature list, assess complexity:
+- **>= 5 features AND involves API endpoints or a data model** → recommend creating `docs/design.md` before Step 2. Say: "This project has multiple features with a data model. Consider drafting `docs/design.md` first using the `templates/design-doc.md` template to align on API contracts and data structures."
+- **Has a significant architectural decision** (auth method, storage choice, framework selection) → recommend: "Consider capturing this in `docs/adr-001.md` using `templates/adr.md`."
+
+Do not block on this — if the user wants to proceed without design docs, proceed.
+
 ### Step 2: Scaffold the project
 
 - Initialize project structure appropriate to the tech stack

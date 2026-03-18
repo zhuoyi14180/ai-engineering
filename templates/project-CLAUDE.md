@@ -28,6 +28,8 @@ cd .ai-engineering && make install
 @.ai-engineering/context/git-workflow.md
 @.ai-engineering/context/testing-patterns.md
 @.ai-engineering/context/security-checklist.md
+<!-- 如需工具选择指引（Read vs Bash cat 等），取消注释下行 -->
+<!-- @.ai-engineering/context/ai-tool-patterns.md -->
 
 ## 项目特定规范
 

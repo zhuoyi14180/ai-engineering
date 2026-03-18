@@ -1,4 +1,4 @@
-.PHONY: install update diff check help
+.PHONY: install update diff check eval help
 # 自动化脚本用法（不作为 make target，直接运行）：
 #   ./scripts/run-coding-agent.sh --project-dir /path/to/project
 #   ./scripts/run-coding-agent.sh --project-dir /path/to/project --max-runs 5 --skip-permissions
@@ -95,6 +95,8 @@ check: ## Verify that ~/.claude/ matches global/
 		name=$$(basename $$script); \
 		diff -q $$script $(CLAUDE_DIR)/hooks/$$name > /dev/null 2>&1 \
 			|| { echo "  MISMATCH: hooks/$$name"; EXIT=1; }; \
+		[ -x $(CLAUDE_DIR)/hooks/$$name ] \
+			|| { echo "  NO EXEC:  hooks/$$name"; EXIT=1; }; \
 	done; \
 	for skill_dir in $(GLOBAL_DIR)/skills/*/; do \
 		skill_name=$$(basename $$skill_dir); \
@@ -103,3 +105,14 @@ check: ## Verify that ~/.claude/ matches global/
 	done; \
 	if [ $$EXIT -eq 0 ]; then echo "OK: ~/.claude/ is up to date"; fi; \
 	exit $$EXIT
+
+eval: ## List skill eval files and show manual execution instructions
+	@echo "Skill Evals"
+	@echo "-----------"
+	@ls evals/skills/ 2>/dev/null | sed 's/^/  /'
+	@echo ""
+	@echo "To run an eval:"
+	@echo "  1. Open the eval file (e.g. evals/skills/commit-eval.md)"
+	@echo "  2. Set up the described scenario in a test project"
+	@echo "  3. Run the corresponding skill (/commit, /review-pr, etc.)"
+	@echo "  4. Verify the output against the checklist in the eval file"
