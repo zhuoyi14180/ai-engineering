@@ -11,6 +11,18 @@
 - 数据库：
 - 测试：
 
+## 文档地图
+
+<!-- CLAUDE.md 是目录，不是百科全书。知识存放在 docs/ 下，这里只做索引。-->
+
+- `ARCHITECTURE.md` — 域和包的顶层地图，依赖方向
+- `docs/design-docs/` — 架构设计决策，含 ADR
+- `docs/exec-plans/active/` — 当前活跃任务计划
+- `docs/exec-plans/tech-debt-tracker.md` — 已知技术债列表
+- `docs/references/` — 第三方工具的 llms.txt 等只读参考
+
+> 规则：任何架构决策、团队约定、设计原则，若未写入上述文件，对 Agent 来说不存在。
+
 ## 接入 AI 工程化体系
 
 本项目以 `ai-engineering` 作为 git submodule，引入个人 AI 工程化配置。
