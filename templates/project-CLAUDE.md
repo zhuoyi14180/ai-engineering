@@ -30,7 +30,7 @@
 ```bash
 # 首次接入
 git submodule add https://github.com/<user>/ai-engineering .ai-engineering
-cd .ai-engineering && make install
+cd .ai-engineering && make install-claude
 ```
 
 ## 上下文引用

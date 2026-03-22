@@ -1,0 +1,13 @@
+# Codex CLI 配置
+# 参考：https://github.com/openai/codex
+
+model = "codex-1"
+model_reasoning_effort = "high"
+
+# 批准策略：on-request = 仅在需要时询问（等价于 Claude Code 的 autoApproveTools）
+approval_policy = "on-request"
+
+# Shell 环境策略：继承核心环境变量，排除敏感信息
+[shell_environment_policy]
+inherit = "core"
+exclude = ["*KEY*", "*TOKEN*", "*SECRET*", "*PASSWORD*", "*CREDENTIAL*"]

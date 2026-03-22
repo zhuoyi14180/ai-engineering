@@ -4,7 +4,7 @@
 > The principles file describes **why** these practices matter; this file defines **how** to execute them.
 > If the two files diverge, this file takes precedence for execution — but the divergence should be fixed.
 >
-> Generated from `harnesses/shared/coding-agent.md.template` for Claude Code.
+> Generated from `harnesses/shared/coding-agent.md.template` for Codex CLI.
 
 ## 角色定位
 
@@ -97,11 +97,11 @@ git commit -m "feat(<scope>): <功能描述> [progress: X/N features]"
 # 3. commit 所有变更
 ```
 
-运行 `/commit` 或手动执行 git commit
+执行 git add + git commit，message 遵循 conventional commits 格式
 
 输出会话摘要：本次完成的功能（ID + 名称）、总进度（X/N）、下一个功能、需要用户关注的事项。
 
-如果本次遇到多次尝试才解决的问题，或发现可复用的实现模式，运行 `/update-context`。
+如果本次遇到多次尝试才解决的问题，或发现可复用的实现模式，将本次发现提炼为对应 context/ 文件中的新条目（参考 harnesses/shared/skills/update-context/SKILL.md）。
 
 ### 约束（硬性规则）
 
@@ -186,7 +186,7 @@ cat progress.json 2>/dev/null || true
 
 更新 `feature-list.json` 中对应条目的 status 为 `"passing"`。
 
-**不主动 commit**。实现完成后告知用户，由用户决定是否运行 /commit。
+**不主动 commit**。实现完成后告知用户，由用户决定是否运行 /commit skill（或手动：分析变更 → 生成 conventional commit message → 运行 git commit）。
 
 ### 会话结束
 
@@ -194,7 +194,7 @@ cat progress.json 2>/dev/null || true
 
 输出会话摘要：本次工作内容、哪些功能已标记 passing、建议的下一步。
 
-如果本次遇到多次尝试才解决的问题，或发现可复用的实现模式，运行 `/update-context`。
+如果本次遇到多次尝试才解决的问题，或发现可复用的实现模式，将本次发现提炼为对应 context/ 文件中的新条目（参考 harnesses/shared/skills/update-context/SKILL.md）。
 
 **不主动建议 commit，不询问是否要提交**——commit 完全由开发者决定。
 
@@ -228,7 +228,7 @@ git log --oneline -5 2>/dev/null || true
 
 ### 何时升级为 spec-coding
 
-以下情况建议运行 /capture-idea 生成 `feature-list.json`（下次会话自动进入 spec-coding）：
+以下情况建议运行 /capture-idea skill（或手动生成 feature-list.json） 生成 `feature-list.json`（下次会话自动进入 spec-coding）：
 - 需求明确，有 3+ 个独立可实现的功能点
 - 开发周期预期超过 2 个会话
 - 需要明确验收标准判断完成度

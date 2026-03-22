@@ -1,0 +1,71 @@
+# Codex CLI 安全规则
+# Starlark 格式，等价于 harnesses/claude-code/hooks/pre-bash-check.sh 的阻断规则。
+# 参考：https://github.com/openai/codex/blob/main/docs/rules.md
+
+# Force push 到主分支
+prefix_rule(
+    pattern = ["git", "push", "--force", "origin", "main"],
+    decision = "forbidden",
+    justification = "Force push to main is blocked. Use a PR instead.",
+    match = [
+        "git push --force origin main",
+        "git push -f origin main",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push", "--force", "origin", "master"],
+    decision = "forbidden",
+    justification = "Force push to master is blocked. Use a PR instead.",
+    match = [
+        "git push --force origin master",
+        "git push -f origin master",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push", "-f", "origin", "main"],
+    decision = "forbidden",
+    justification = "Force push to main is blocked.",
+)
+
+prefix_rule(
+    pattern = ["git", "push", "-f", "origin", "master"],
+    decision = "forbidden",
+    justification = "Force push to master is blocked.",
+)
+
+# 危险的文件系统操作
+prefix_rule(
+    pattern = ["rm", "-rf", "/"],
+    decision = "forbidden",
+    justification = "Root deletion is blocked.",
+    match = ["rm -rf /"],
+    not_match = ["rm -rf /tmp/test"],
+)
+
+prefix_rule(
+    pattern = ["rm", "-rf", "~"],
+    decision = "forbidden",
+    justification = "Home directory deletion is blocked.",
+)
+
+# 危险的数据库操作（需要确认）
+prefix_rule(
+    pattern = ["DROP", "TABLE"],
+    decision = "prompt",
+    justification = "Destructive database operation requires confirmation.",
+)
+
+prefix_rule(
+    pattern = ["DROP", "DATABASE"],
+    decision = "forbidden",
+    justification = "Dropping a database is blocked. Run manually if intended.",
+)
+
+# 危险的权限操作
+prefix_rule(
+    pattern = ["chmod", "-R", "777", "/"],
+    decision = "forbidden",
+    justification = "Recursive 777 on root is blocked.",
+)

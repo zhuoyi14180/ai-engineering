@@ -6,7 +6,15 @@
       "WebFetch(domain:docs.anthropic.com)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(chmod +x:*)"
+      "Bash(chmod +x:*)",
+      "Bash(grep -r \"TODO\\\\|FIXME\\\\|XXX\\\\|HACK\" /Users/jorizhang/projects/mine/ai-engineering --include=*.md --include=*.sh)",
+      "Bash(ls:*)",
+      "WebFetch(domain:docs.cursor.com)",
+      "WebFetch(domain:cursor.com)",
+      "WebFetch(domain:developers.openai.com)",
+      "Bash(mkdir:*)",
+      "Bash(bash scripts/build-harnesses.sh)",
+      "Bash(make help:*)"
     ]
   }
 }
