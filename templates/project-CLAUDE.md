@@ -11,6 +11,18 @@
 - 数据库：
 - 测试：
 
+## 文档地图
+
+<!-- CLAUDE.md 是目录，不是百科全书。知识存放在 docs/ 下，这里只做索引。-->
+
+- `ARCHITECTURE.md` — 域和包的顶层地图，依赖方向
+- `docs/design.md` — 系统设计文档（API 契约、数据模型、架构决策）
+- `docs/adr-<NNN>-<topic>.md` — 架构决策记录
+- `docs/tech-debt-tracker.md` — 已知技术债列表
+- `docs/references/` — 第三方工具的 llms.txt 等只读参考
+
+> 规则：任何架构决策、团队约定、设计原则，若未写入上述文件，对 Agent 来说不存在。
+
 ## 接入 AI 工程化体系
 
 本项目以 `ai-engineering` 作为 git submodule，引入个人 AI 工程化配置。
@@ -18,7 +30,7 @@
 ```bash
 # 首次接入
 git submodule add https://github.com/<user>/ai-engineering .ai-engineering
-cd .ai-engineering && make install
+cd .ai-engineering && make install-claude
 ```
 
 ## 上下文引用
@@ -29,7 +41,7 @@ cd .ai-engineering && make install
 @.ai-engineering/context/testing-patterns.md
 @.ai-engineering/context/security-checklist.md
 <!-- 如需工具选择指引（Read vs Bash cat 等），取消注释下行 -->
-<!-- @.ai-engineering/context/ai-tool-patterns.md -->
+<!-- @.ai-engineering/context/evaluation-rubrics.md -->
 
 ## 项目特定规范
 

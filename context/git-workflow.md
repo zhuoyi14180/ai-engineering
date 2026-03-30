@@ -58,3 +58,14 @@
 - 完成每个功能点立即 commit（不攒到最后）
 - commit message 中包含 `[progress]` 标记，便于追踪
 - 例：`feat(auth): 实现登录接口 [progress: 3/10 features]`
+
+## 架构决策记录（ADR）
+
+做出以下决策时创建 ADR：框架选型、认证方案、存储选型、外部服务引入。
+
+文件命名：`docs/adr-<NNN>-<topic>.md`
+- NNN：三位数字，从 001 开始，按创建顺序递增
+- topic：kebab-case 短标题，描述决策主题
+- 示例：`docs/adr-001-auth-method.md`、`docs/adr-002-database-choice.md`
+
+使用 `templates/adr.md` 创建。
