@@ -8,27 +8,41 @@
       "name": "<feature name>",
       "description": "<what this feature does and why it's needed>",
       "acceptance_criteria": [
-        "<specific, testable criterion 1>",
-        "<specific, testable criterion 2>"
+        "<specific, testable criterion — names exact behavior, not a vague goal>",
+        "<another criterion>"
       ],
       "status": "failing",
       "priority": "high",
       "depends_on": [],
       "spec_ref": "",
-      "notes": ""
+      "notes": "",
+      "replanned": false,
+      "eval_report": {
+        "result": null,
+        "issues": [],
+        "tested_at": null,
+        "retry_count": 0
+      }
     },
     {
       "id": "F002",
       "name": "<feature name>",
       "description": "<what this feature does and why it's needed>",
       "acceptance_criteria": [
-        "<specific, testable criterion 1>"
+        "<specific, testable criterion>"
       ],
       "status": "failing",
       "priority": "medium",
       "depends_on": ["F001"],
-      "spec_ref": "docs/design.md#feature-name",
-      "notes": ""
+      "spec_ref": "docs/design.md#section",
+      "notes": "",
+      "replanned": false,
+      "eval_report": {
+        "result": null,
+        "issues": [],
+        "tested_at": null,
+        "retry_count": 0
+      }
     }
   ]
 }

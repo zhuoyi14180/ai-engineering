@@ -78,7 +78,7 @@ cp .ai-engineering/templates/project-CLAUDE.md CLAUDE.md
 /init-project <项目描述>
 ```
 
-skill 会自动生成 `feature-list.json` 和 `progress.json`，完成环境搭建和初始 commit。
+skill 负责搭建项目环境，然后委托 Planner Agent 生成 `feature-list.json`（含 acceptance_criteria 和依赖关系）。最终产出：`feature-list.json`、`progress.json` 和初始 commit。
 
 ### 分支 B：手动初始化
 
@@ -95,7 +95,7 @@ cp .ai-engineering/templates/progress.json progress.json
 
 #### 如何写好 acceptance_criteria
 
-`acceptance_criteria` 是 Coding Agent 的实现依据，也是 TDD 的测试设计来源。每条标准必须是**可验证的具体行为**，而不是模糊的目标描述。
+`acceptance_criteria` 由 Planner Agent 在初始化时生成，也是 Coding Agent 的实现依据和 Evaluator 的验证标准。手动填写时，每条标准必须是**可验证的具体行为**，而不是模糊的目标描述。
 
 **判断标准**：能直接写成一个测试用例的，才是好的验收标准。
 
@@ -114,21 +114,19 @@ cp .ai-engineering/templates/progress.json progress.json
 
 ### 后续开发（两种分支通用）
 
-启动 Coding Agent（参考 `.ai-engineering/agents/coding/prompt.md`），每次新会话粘贴该 prompt 作为开场，Agent 会自动读取 `progress.json` 接续上次进度。
+启动 Coding Agent（参考 `.ai-engineering/agents/coding.md`），每次新会话粘贴该 prompt 作为开场，Agent 会自动读取 `progress.json` 接续上次进度。feature 进入 blocked 状态时，Coding Agent 会自动调用 Planner Agent 进行根因诊断和重规划，只有 Planner 也无法解决时才停止循环通知人工介入。
 
 ## 文件结构建议
 
 ```
 <project>/
 ├── CLAUDE.md                  # 项目级配置（引用 ai-engineering context）
+├── AGENTS.md                  # Codex/Cursor 项目级配置（与 CLAUDE.md 等价）
 ├── .ai-engineering/           # submodule
 ├── feature-list.json          # 功能列表（长期任务时创建）
 ├── progress.json              # 进度追踪（长期任务时创建）
 └── .claude/
-    ├── settings.json          # 项目级 hooks（可选）
-    └── rules/                 # 路径匹配规则（可选）
-        ├── api-rules.md
-        └── test-rules.md
+    └── settings.json          # 项目级 hooks（可选）
 ```
 
 ## 同步全局配置

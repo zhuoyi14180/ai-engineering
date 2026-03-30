@@ -16,9 +16,9 @@
 <!-- CLAUDE.md 是目录，不是百科全书。知识存放在 docs/ 下，这里只做索引。-->
 
 - `ARCHITECTURE.md` — 域和包的顶层地图，依赖方向
-- `docs/design-docs/` — 架构设计决策，含 ADR
-- `docs/exec-plans/active/` — 当前活跃任务计划
-- `docs/exec-plans/tech-debt-tracker.md` — 已知技术债列表
+- `docs/design.md` — 系统设计文档（API 契约、数据模型、架构决策）
+- `docs/adr-<NNN>-<topic>.md` — 架构决策记录
+- `docs/tech-debt-tracker.md` — 已知技术债列表
 - `docs/references/` — 第三方工具的 llms.txt 等只读参考
 
 > 规则：任何架构决策、团队约定、设计原则，若未写入上述文件，对 Agent 来说不存在。
@@ -41,7 +41,7 @@ cd .ai-engineering && make install-claude
 @.ai-engineering/context/testing-patterns.md
 @.ai-engineering/context/security-checklist.md
 <!-- 如需工具选择指引（Read vs Bash cat 等），取消注释下行 -->
-<!-- @.ai-engineering/context/ai-tool-patterns.md -->
+<!-- @.ai-engineering/context/evaluation-rubrics.md -->
 
 ## 项目特定规范
 

@@ -14,7 +14,19 @@
       "WebFetch(domain:developers.openai.com)",
       "Bash(mkdir:*)",
       "Bash(bash scripts/build-harnesses.sh)",
-      "Bash(make help:*)"
+      "Bash(make help:*)",
+      "WebFetch(domain:openai.github.io)",
+      "WebFetch(domain:platform.openai.com)",
+      "WebFetch(domain:openai.com)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(curl -s https://raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/LICENSE.txt)",
+      "Bash(curl -s https://raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/SKILL.md)",
+      "Bash(curl:*)",
+      "Bash(python3 -c \"import json,sys; [print\\(f[''''name'''']\\) for f in json.load\\(sys.stdin\\)]\")",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(f[''''name'''']\\) for f in data if f[''''type'''']==''''file'''']\")",
+      "Bash(find /Users/jorizhang/projects/mine/ai-engineering -name *.md -path */evals/* -o -name *.md -path */rules/*)"
     ]
   }
 }

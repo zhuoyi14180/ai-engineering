@@ -24,7 +24,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-AGENT_PROMPT="$SCRIPT_DIR/../agents/coding/prompt.md"
+AGENT_PROMPT="$SCRIPT_DIR/../agents/coding.md"
 
 # ---------- 默认配置 ----------
 MAX_RUNS=0
@@ -91,6 +91,11 @@ count_failing() {
   grep -c '"status".*"failing"' "$PROJECT_DIR/feature-list.json" 2>/dev/null || echo 0
 }
 
+# ---------- 辅助函数：统计 blocked features ----------
+count_blocked() {
+  grep -c '"status".*"blocked"' "$PROJECT_DIR/feature-list.json" 2>/dev/null || echo 0
+}
+
 # ---------- 构造 claude 调用参数 ----------
 CLAUDE_ARGS=("-p")
 CLAUDE_ARGS+=("--allowedTools" "Bash,Edit,Read,Write,Glob,Grep")
@@ -123,6 +128,15 @@ while true; do
   REMAINING="$(count_failing)"
 
   if [[ "$REMAINING" -eq 0 ]]; then
+    BLOCKED="$(count_blocked)"
+    if [[ "$BLOCKED" -gt 0 ]]; then
+      log "$BLOCKED feature(s) blocked — Planner intervention failed. Human review required."
+      log "Check feature-list.json for blocked features and their notes."
+      if [[ -n "${NOTIFY_CMD:-}" ]]; then
+        eval "$NOTIFY_CMD" "Coding Agent stopped: $BLOCKED feature(s) blocked in $(basename "$PROJECT_DIR")" 2>/dev/null || true
+      fi
+      exit 1
+    fi
     log "All features passing. Stopping after $run runs."
     break
   fi
@@ -183,10 +197,12 @@ done
 
 # ---------- 最终汇总 ----------
 FINAL_REMAINING="$(count_failing)"
+FINAL_BLOCKED="$(count_blocked)"
 log "=== Summary ==="
 log "Total runs:      $run"
 log "Completed:       $TOTAL_COMPLETED feature(s)"
 log "Still failing:   $FINAL_REMAINING feature(s)"
+log "Blocked:         $FINAL_BLOCKED feature(s)"
 log "Main log:        $MAIN_LOG"
 
 if [[ "$FINAL_REMAINING" -gt 0 ]]; then

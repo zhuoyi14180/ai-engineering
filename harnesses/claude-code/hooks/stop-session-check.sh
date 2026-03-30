@@ -4,7 +4,7 @@
 # Receives session info via stdin as JSON.
 #
 # Behavior by mode (detected via file existence):
-#   automated mode (progress.json exists):
+#   auto-coding mode (progress.json exists):
 #     - Uncommitted changes present → exit 1 (block session end, prompt to commit)
 #     - No uncommitted changes       → exit 0 (silent)
 #   spec-coding / vibe-coding (no progress.json):
@@ -15,7 +15,7 @@
 
 set -uo pipefail
 
-# Only enforce in automated mode (progress.json exists in current or parent dirs)
+# Only enforce in auto-coding mode (progress.json exists in current or parent dirs)
 find_progress_json() {
   local dir
   dir="$(pwd)"
@@ -24,6 +24,10 @@ find_progress_json() {
       echo "$dir/progress.json"
       return 0
     fi
+    # Stop at git repository boundary to avoid false positives in monorepos
+    if [[ -d "$dir/.git" ]]; then
+      return 1
+    fi
     dir="$(dirname "$dir")"
   done
   return 1
@@ -31,12 +35,12 @@ find_progress_json() {
 
 PROGRESS_FILE="$(find_progress_json 2>/dev/null || true)"
 
-# Not automated mode — exit silently
+# Not auto-coding mode — exit silently
 if [[ -z "$PROGRESS_FILE" ]]; then
   exit 0
 fi
 
-# Automated mode — check for uncommitted changes
+# Auto-coding mode — check for uncommitted changes
 if ! git rev-parse --is-inside-work-tree &>/dev/null 2>&1; then
   exit 0
 fi
@@ -45,7 +49,7 @@ UNCOMMITTED=$(git status --porcelain 2>/dev/null)
 
 if [[ -n "$UNCOMMITTED" ]]; then
   echo "" >&2
-  echo "[stop-check] Automated mode: uncommitted changes detected." >&2
+  echo "[stop-check] Auto-coding mode: uncommitted changes detected." >&2
   echo "[stop-check] progress.json was found at: $PROGRESS_FILE" >&2
   echo "[stop-check] Run /commit (or 'git add . && git commit') before ending the session." >&2
   echo "[stop-check] Uncommitted files:" >&2

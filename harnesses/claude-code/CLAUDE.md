@@ -12,7 +12,7 @@
 
 | 条件 | 模式 |
 |------|------|
-| `progress.json` + `feature-list.json` 同时存在 | **automated**（自动化）|
+| `progress.json` + `feature-list.json` 同时存在 | **auto-coding**（自动化）|
 | 只有 `feature-list.json` 存在 | **spec-coding**（结构化交互）|
 | 两者都不存在 | **vibe-coding**（自由探索）|
 
@@ -21,10 +21,10 @@
 ## 任务启动
 
 - 非平凡任务（超过 3 步或改动超过 2 个文件）先进入 Plan 模式
-- **automated 模式**：每个会话开始前必须执行状态检查（pwd → git log → progress.json → feature-list.json → test_command）
+- **auto-coding 模式**：每个会话开始前必须执行状态检查（pwd → git log → progress.json → feature-list.json → test_command）
 - **spec-coding 模式**：会话开始时确认工作目录和 git log；如有 feature-list.json 则读取
 - **vibe-coding 模式**：仅确认工作目录，直接询问用户要做什么
-- **automated 模式**：必须在项目根目录维护 `progress.json`；spec-coding / vibe-coding 模式不强制
+- **auto-coding 模式**：必须在项目根目录维护 `progress.json`；spec-coding / vibe-coding 模式不强制
 
 ## 代码修改原则
 
@@ -43,6 +43,7 @@
 
 - 非平凡的 push、force push、reset --hard 等操作执行前须确认
 - commit 格式和分支策略详见 @context/git-workflow.md
+- 做出以下决策时记录 ADR（`docs/adr-<NNN>-<topic>.md`，如 `adr-001-auth-method.md`）：框架选型、认证方案、存储选型、外部服务引入
 
 # 编码偏好
 

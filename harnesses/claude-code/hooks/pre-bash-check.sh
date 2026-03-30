@@ -16,27 +16,33 @@ if [ -z "$COMMAND" ]; then
   exit 0
 fi
 
-# Block patterns — destructive operations that require explicit user confirmation
-BLOCKED_PATTERNS=(
-  "rm -rf /"
-  "rm -rf ~"
-  "rm -rf \$HOME"
-  "git push --force origin main"
-  "git push --force origin master"
-  "git push -f origin main"
-  "git push -f origin master"
-  "DROP TABLE"
-  "DROP DATABASE"
-  "chmod -R 777 /"
-  ":(){ :|:& };:"  # fork bomb
-)
+# Block patterns — destructive shell operations requiring explicit user confirmation.
+# These patterns match actual command invocations, NOT file content containing these strings.
+# The check uses word-boundary matching to avoid false positives on SQL in source files.
 
-for pattern in "${BLOCKED_PATTERNS[@]}"; do
-  if echo "$COMMAND" | grep -qF "$pattern"; then
-    echo "BLOCKED: Potentially destructive command detected: '$pattern'" >&2
-    echo "If you intended this, please run it manually in the terminal." >&2
-    exit 1
-  fi
-done
+# Git force-push to protected branches (exact match on git push commands)
+if echo "$COMMAND" | grep -qE '^\s*git\s+push\s+.*(-f|--force)\s+(origin\s+)?(main|master)\b'; then
+  echo "BLOCKED: Force push to main/master is not allowed." >&2
+  echo "If you intended this, please run it manually in the terminal." >&2
+  exit 1
+fi
+
+# Filesystem destruction (rm -rf on root or home)
+if echo "$COMMAND" | grep -qE 'rm\s+-rf\s+(\/\s*$|~\s*$|\$HOME\s*$|\/\s+|~\s+|\$HOME\s+)'; then
+  echo "BLOCKED: Destructive rm -rf on root or home directory detected." >&2
+  exit 1
+fi
+
+# Permission escalation on root
+if echo "$COMMAND" | grep -qE 'chmod\s+-R\s+777\s+\/'; then
+  echo "BLOCKED: chmod -R 777 / detected." >&2
+  exit 1
+fi
+
+# Fork bomb
+if echo "$COMMAND" | grep -qF ':(){ :|:& };:'; then
+  echo "BLOCKED: Fork bomb detected." >&2
+  exit 1
+fi
 
 exit 0

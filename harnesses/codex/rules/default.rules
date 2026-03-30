@@ -50,11 +50,11 @@ prefix_rule(
     justification = "Home directory deletion is blocked.",
 )
 
-# 危险的数据库操作（需要确认）
+# 危险的数据库操作（阻断）
 prefix_rule(
     pattern = ["DROP", "TABLE"],
-    decision = "prompt",
-    justification = "Destructive database operation requires confirmation.",
+    decision = "forbidden",
+    justification = "Dropping a table is blocked. Run manually if intended.",
 )
 
 prefix_rule(
