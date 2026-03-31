@@ -98,7 +98,7 @@ count_blocked() {
 
 # ---------- 构造 claude 调用参数 ----------
 CLAUDE_ARGS=("-p")
-CLAUDE_ARGS+=("--allowedTools" "Bash,Edit,Read,Write,Glob,Grep,Task")
+CLAUDE_ARGS+=("--allowedTools" "Bash,Edit,Read,Write,Glob,Grep,WebFetch,WebSearch,NotebookEdit,Task")
 if [[ "$SKIP_PERMISSIONS" == true ]]; then
   CLAUDE_ARGS+=("--dangerously-skip-permissions")
 fi
