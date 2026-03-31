@@ -129,7 +129,7 @@ ai-engineering/
 | 项目规范 | `<project>/CLAUDE.md` | `<project>/AGENTS.md` | `<project>/AGENTS.md` |
 | Skills | `~/.claude/skills/` | `~/.agents/skills/` | `~/.cursor/skills/` |
 | Agents | `~/.claude/agents/` | `~/.codex/agents/` | `~/.cursor/agents/` |
-| Hooks | `settings.json` | Starlark rules | 无 |
+| Hooks | `settings.json` |  `.rules` | 无 |
 
 ## 接入新项目
 
