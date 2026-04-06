@@ -88,17 +88,25 @@ log() {
 
 # ---------- 辅助函数：统计 failing features ----------
 count_failing() {
-  grep -c '"status".*"failing"' "$PROJECT_DIR/feature-list.json" 2>/dev/null || echo 0
+  jq '[.features[] | select(.status=="failing")] | length' \
+    "$PROJECT_DIR/feature-list.json" 2>/dev/null || echo 0
 }
 
 # ---------- 辅助函数：统计 blocked features ----------
 count_blocked() {
-  grep -c '"status".*"blocked"' "$PROJECT_DIR/feature-list.json" 2>/dev/null || echo 0
+  jq '[.features[] | select(.status=="blocked")] | length' \
+    "$PROJECT_DIR/feature-list.json" 2>/dev/null || echo 0
 }
 
-# ---------- 构造 claude 调用参数 ----------
+# ---------- 辅助函数：统计 eval_pending features（session 崩溃时可能滞留）----------
+count_stale_pending() {
+  jq '[.features[] | select(.status=="eval_pending")] | length' \
+    "$PROJECT_DIR/feature-list.json" 2>/dev/null || echo 0
+}
+
+
 CLAUDE_ARGS=("-p")
-CLAUDE_ARGS+=("--allowedTools" "Bash,Edit,Read,Write,Glob,Grep,WebFetch,WebSearch,NotebookEdit,Task")
+CLAUDE_ARGS+=("--allowedTools" "Bash,Edit,Read,Write,Glob,Grep,WebFetch,WebSearch,NotebookEdit,Task,Agent")
 if [[ "$SKIP_PERMISSIONS" == true ]]; then
   CLAUDE_ARGS+=("--dangerously-skip-permissions")
 fi
@@ -126,14 +134,24 @@ run=0
 
 while true; do
   REMAINING="$(count_failing)"
+  BLOCKED="$(count_blocked)"
+
+  # 有 blocked feature 立即停止，无论是否还有 failing
+  if [[ "$BLOCKED" -gt 0 ]]; then
+    log "$BLOCKED feature(s) blocked — Planner intervention failed. Human review required."
+    log "Check feature-list.json for blocked features and their notes."
+    if [[ -n "${NOTIFY_CMD:-}" ]]; then
+      eval "$NOTIFY_CMD" "Coding Agent stopped: $BLOCKED feature(s) blocked in $(basename "$PROJECT_DIR")" 2>/dev/null || true
+    fi
+    exit 1
+  fi
 
   if [[ "$REMAINING" -eq 0 ]]; then
-    BLOCKED="$(count_blocked)"
-    if [[ "$BLOCKED" -gt 0 ]]; then
-      log "$BLOCKED feature(s) blocked — Planner intervention failed. Human review required."
-      log "Check feature-list.json for blocked features and their notes."
+    STALE="$(count_stale_pending)"
+    if [[ "$STALE" -gt 0 ]]; then
+      log "Warning: $STALE feature(s) stuck in eval_pending. Session may have crashed. Human review required."
       if [[ -n "${NOTIFY_CMD:-}" ]]; then
-        eval "$NOTIFY_CMD" "Coding Agent stopped: $BLOCKED feature(s) blocked in $(basename "$PROJECT_DIR")" 2>/dev/null || true
+        eval "$NOTIFY_CMD" "Coding Agent stopped: $STALE feature(s) stuck in eval_pending in $(basename "$PROJECT_DIR")" 2>/dev/null || true
       fi
       exit 1
     fi
@@ -147,7 +165,11 @@ while true; do
   fi
 
   run=$((run + 1))
-  log "--- Run $run${MAX_RUNS:+/$MAX_RUNS} | Remaining: $REMAINING failing features ---"
+  if [[ "$MAX_RUNS" -gt 0 ]]; then
+    log "--- Run $run/$MAX_RUNS | Remaining: $REMAINING failing features ---"
+  else
+    log "--- Run $run | Remaining: $REMAINING failing features ---"
+  fi
   RUN_LOG="$LOG_DIR/run-$run-$TIMESTAMP.log"
 
   # 构造本次 prompt：复用 Coding Agent prompt + 自动化附加指令
@@ -164,7 +186,8 @@ $(cat "$AGENT_PROMPT")
 此次为非交互式自动化会话：
 - 请先 cd "$PROJECT_DIR"，再按会话开始检查清单执行
 - 跳过"向用户确认"步骤，确认状态后直接开始实现
-- 完成一个 feature 后立即结束会话
+- 当前功能经 Evaluator 评估通过（status 变为 passing）后立即结束会话
+- 若 Evaluator 返回 fail，先修复再重新提交，直到通过或达到 retry_count 上限
 PROMPT_EOF
 
   # 执行 claude（可选超时）
