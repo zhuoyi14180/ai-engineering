@@ -110,16 +110,17 @@ endif
 # ── Third-party Skills ────────────────────────────────────────────────────────
 
 update-skill-creator: ## Fetch latest skill-creator from anthropics/skills
-	$(eval TMP := $(shell mktemp -d))
-	@git clone --depth=1 --filter=blob:none --sparse \
-		https://github.com/anthropics/skills.git $(TMP)/skills
-	@cd $(TMP)/skills && git sparse-checkout set skills/skill-creator
-	$(eval VERSION := $(shell git -C $(TMP)/skills log -1 --format='%h %ai'))
-	@rm -rf $(CLAUDE_DIR)/skills/skill-creator
-	@mkdir -p $(CLAUDE_DIR)/skills
-	@cp -r $(TMP)/skills/skills/skill-creator $(CLAUDE_DIR)/skills/skill-creator
-	@rm -rf $(TMP)
-	@echo "  [OK] skill-creator installed ($(VERSION))"
+	@set -e; \
+	TMP=$$(mktemp -d); \
+	trap 'rm -rf "$$TMP"' EXIT; \
+	git clone --depth=1 --filter=blob:none --sparse \
+		https://github.com/anthropics/skills.git "$$TMP/skills"; \
+	git -C "$$TMP/skills" sparse-checkout set skills/skill-creator; \
+	VERSION=$$(git -C "$$TMP/skills" log -1 --format='%h %ai'); \
+	rm -rf $(CLAUDE_DIR)/skills/skill-creator; \
+	mkdir -p $(CLAUDE_DIR)/skills; \
+	cp -r "$$TMP/skills/skills/skill-creator" $(CLAUDE_DIR)/skills/skill-creator; \
+	echo "  [OK] skill-creator installed ($$VERSION)"
 
 # ── Evals ─────────────────────────────────────────────────────────────────────
 
