@@ -43,9 +43,13 @@ cat feature-list.json         # 了解待办功能
 
 ### 选择功能
 
-从 `feature-list.json` 选第一个 `status: "failing"` 的功能，按优先级 high → medium → low。
+按列表顺序选第一个满足以下所有条件的功能：
+1. `status: "failing"`
+2. 排在它前面的所有 feature 均为 `"passing"`（顺序依赖：前置未完成则不能开始）
+
 **一次只做一个功能。**
 跳过 `status: "eval_pending"` 或 `"blocked"` 的功能。
+如果找不到任何可选功能（所有 failing feature 都被前置阻断），立即停止，在 progress.json notes 中说明原因，通知用户。
 
 ### 实现功能
 
@@ -110,7 +114,7 @@ cat feature-list.json  # 读取该 feature 的 replanned 字段
 ```
 
 输出会话摘要：本次完成的功能、总进度（X/N）、下一个功能。
-若本次遇到值得记录的模式或问题，运行 `/update-context`。
+若本次遇到值得记录的模式或问题，在 progress.json notes 中记录。
 
 ### 约束（硬性规则）
 

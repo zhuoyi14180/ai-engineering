@@ -1,7 +1,7 @@
 ---
 name: evaluator
 description: Independent QA agent. Verifies feature implementations against acceptance criteria. Use after Coding Agent marks a feature eval_pending.
-tools: Read, Bash, Glob, Grep
+tools: Read, Bash, Glob, Grep, Edit, Write
 ---
 
 # Evaluator Agent
